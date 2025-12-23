@@ -1,21 +1,17 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import "./ConferenceEvent.css";
 import TotalCost from "./TotalCost";
+import { toggleMealSelection } from "./mealsSlice";
+import { incrementAvQuantity, decrementAvQuantity } from "./avSlice";
 import { useSelector, useDispatch } from "react-redux";
 import { incrementQuantity, decrementQuantity } from "./venueSlice";
-import { incrementAvQuantity, decrementAvQuantity } from "./avSlice";
-import { toggleMealSelection } from "./mealsSlice";
-
 const ConferenceEvent = () => {
   const [showItems, setShowItems] = useState(false);
   const [numberOfPeople, setNumberOfPeople] = useState(1);
-
   const venueItems = useSelector((state) => state.venue);
   const avItems = useSelector((state) => state.av);
   const mealsItems = useSelector((state) => state.meals);
-
   const dispatch = useDispatch();
-
   const remainingAuditoriumQuantity =
     3 -
     venueItems.find((item) => item.name === "Auditorium Hall (Capacity:200)")
@@ -41,7 +37,6 @@ const ConferenceEvent = () => {
       dispatch(decrementQuantity(index));
     }
   };
-
   const handleIncrementAvQuantity = (index) => {
     dispatch(incrementAvQuantity(index));
   };
@@ -63,13 +58,11 @@ const ConferenceEvent = () => {
 
   const getItemsFromTotalCost = () => {
     const items = [];
-
     venueItems.forEach((item) => {
       if (item.quantity > 0) {
         items.push({ ...item, type: "venue" });
       }
     });
-
     avItems.forEach((item) => {
       if (
         item.quantity > 0 &&
@@ -78,7 +71,6 @@ const ConferenceEvent = () => {
         items.push({ ...item, type: "av" });
       }
     });
-
     mealsItems.forEach((item) => {
       if (item.selected) {
         const itemForDisplay = { ...item, type: "meals" };
@@ -88,7 +80,6 @@ const ConferenceEvent = () => {
         items.push(itemForDisplay);
       }
     });
-
     return items;
   };
 
@@ -96,7 +87,6 @@ const ConferenceEvent = () => {
 
   const ItemsDisplay = ({ items }) => {
     console.log(items);
-
     return (
       <>
         <div className="display_box1">
@@ -136,7 +126,6 @@ const ConferenceEvent = () => {
 
   const calculateTotalCost = (section) => {
     let totalCost = 0;
-
     if (section === "venue") {
       venueItems.forEach((item) => {
         totalCost += item.cost * item.quantity;
@@ -152,7 +141,6 @@ const ConferenceEvent = () => {
         }
       });
     }
-
     return totalCost;
   };
 
@@ -199,7 +187,6 @@ const ConferenceEvent = () => {
           </button>
         </div>
       </navbar>
-
       <div className="main_container">
         {!showItems ? (
           <div className="items-information">
@@ -207,18 +194,14 @@ const ConferenceEvent = () => {
               <div className="text">
                 <h1>Venue Room Selection</h1>
               </div>
-
               <div className="venue_selection">
                 {venueItems.map((item, index) => (
                   <div className="venue_main" key={index}>
                     <div className="img">
                       <img src={item.img} alt={item.name} />
                     </div>
-
                     <div className="text">{item.name}</div>
-
                     <div>${item.cost}</div>
-
                     <div className="button_container">
                       {venueItems[index].name ===
                       "Auditorium Hall (Capacity:200)" ? (
@@ -282,7 +265,6 @@ const ConferenceEvent = () => {
                   </div>
                 ))}
               </div>
-
               <div className="total_cost">Total Cost: ${venueTotalCost}</div>
             </div>
 
@@ -291,7 +273,6 @@ const ConferenceEvent = () => {
               <div className="text">
                 <h1> Add-ons Selection</h1>
               </div>
-
               <div className="addons_selection">
                 {avItems.map((item, index) => (
                   <div className="av_data venue_main" key={index}>
@@ -320,7 +301,6 @@ const ConferenceEvent = () => {
                   </div>
                 ))}
               </div>
-
               <div className="total_cost">Total Cost: {avTotalCost}</div>
             </div>
 
@@ -332,19 +312,22 @@ const ConferenceEvent = () => {
               </div>
 
               <div className="input-container venue_selection">
-                <label htmlFor="numberOfPeople">
-                  <h3>Number of People:</h3>
-                </label>
-                <input
-                  type="number"
-                  className="input_box5"
-                  id="numberOfPeople"
-                  value={numberOfPeople}
-                  onChange={(e) => setNumberOfPeople(parseInt(e.target.value))}
-                  min="1"
-                />
+                <div className="input-container venue_selection">
+                  <label htmlFor="numberOfPeople">
+                    <h3>Number of People:</h3>
+                  </label>
+                  <input
+                    type="number"
+                    className="input_box5"
+                    id="numberOfPeople"
+                    value={numberOfPeople}
+                    onChange={(e) =>
+                      setNumberOfPeople(parseInt(e.target.value))
+                    }
+                    min="1"
+                  />
+                </div>
               </div>
-
               <div className="meal_selection">
                 {mealsItems.map((item, index) => (
                   <div
@@ -365,7 +348,6 @@ const ConferenceEvent = () => {
                   </div>
                 ))}
               </div>
-
               <div className="total_cost">Total Cost: {mealsTotalCost}</div>
             </div>
           </div>
@@ -373,7 +355,6 @@ const ConferenceEvent = () => {
           <div className="total_amount_detail">
             <TotalCost
               totalCosts={totalCosts}
-              handleClick={handleToggleItems}
               ItemsDisplay={() => <ItemsDisplay items={items} />}
             />
           </div>
